@@ -1,0 +1,14 @@
+{
+  "name": "preact-enzyme-adapter",
+  "version": "0.1.0",
+  "description": "A Preact adapater for the Enzyme testing utility",
+  "main": "lib/index.js",
+  "author": "Brandon Dail",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-preset-env": "^1.6.0",
+    "enzyme": "file:../enzyme",
+    "preact": "^8.1.0"
+  }
+}
