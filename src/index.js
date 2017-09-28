@@ -1,6 +1,6 @@
-const EnzymeAdapater = require('enzyme/src/adapters/EnzymeAdapter')
+const EnzymeAdapter = require('enzyme/src/adapters/EnzymeAdapter')
 
-class PreactEnzymeAdapater extends EnzymeAdapater {
+class PreactEnzymeAdapter extends EnzymeAdapter {
   // @TODO implement a mount renderer
   createMountRenderer(options) {
     throwUnimplementedError('createMountRenderer')
@@ -76,7 +76,7 @@ class PreactEnzymeAdapater extends EnzymeAdapater {
 }
 
 function throwUnimplementedError(name) {
-  throw new Error(`Error: PreactEnzymeAdapater.${name} is not yet implemented`)
+  throw new Error(`Error: PreactEnzymeAdapter.${name} is not yet implemented`)
 }
 
-module.exports = PreactEnzymeAdapater
+module.exports = PreactEnzymeAdapter
