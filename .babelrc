@@ -1,3 +1,6 @@
 {
-  "presets": ["airbnb"]
+  "presets": ["airbnb"],
+  "plugins": [
+    ["transform-react-jsx", { "pragma": "h" }]
+  ]
 }
