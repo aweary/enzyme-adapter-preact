@@ -1,8 +1,6 @@
 import Preact from 'preact';
 import renderToString from 'preact-render-to-string';
-// import TestUtils from 'react-dom/test-utils';
-// eslint-disable-next-line import/no-unresolved, import/extensions
-// import ShallowRenderer from 'react-test-renderer/shallow';
+import ShallowRenderer from 'react-test-renderer/shallow';
 import values from 'object.values';
 import { EnzymeAdapter } from 'enzyme';
 import {
@@ -56,8 +54,8 @@ function instanceToTree(inst) {
   if (inst._renderedChildren) {
     return {
       nodeType: nodeType(inst),
-      type: el.type,
-      props: el.props,
+      type: el.nodeName,
+      props: el.attributes,
       key: el.key || undefined,
       ref: el.ref,
       instance: inst._instance || inst._hostNode || null,
@@ -67,8 +65,8 @@ function instanceToTree(inst) {
   if (inst._hostNode) {
     return {
       nodeType: 'host',
-      type: el.type,
-      props: el.props,
+      type: el.nodeName,
+      props: el.attributes,
       key: el.key || undefined,
       ref: el.ref,
       instance: inst._instance || inst._hostNode || null,
@@ -78,8 +76,8 @@ function instanceToTree(inst) {
   if (inst._renderedComponent) {
     return {
       nodeType: nodeType(inst),
-      type: el.type,
-      props: el.props,
+      type: el.nodeName,
+      props: el.attributes,
       key: el.key || undefined,
       ref: el.ref,
       instance: inst._instance || inst._hostNode || null,
@@ -88,8 +86,8 @@ function instanceToTree(inst) {
   }
   return {
     nodeType: nodeType(inst),
-    type: el.type,
-    props: el.props,
+    type: el.nodeName,
+    props: el.attributes,
     key: el.key || undefined,
     ref: el.ref,
     instance: inst._instance || null,
@@ -148,56 +146,49 @@ class PreactAdapter extends EnzymeAdapter {
 //     };
 //   }
 
-//   createShallowRenderer(/* options */) {
-//     const renderer = new ShallowRenderer();
-//     let isDOM = false;
-//     let cachedNode = null;
-//     return {
-//       render(el, context) {
-//         cachedNode = el;
-//         /* eslint consistent-return: 0 */
-//         if (typeof el.type === 'string') {
-//           isDOM = true;
-//         } else {
-//           isDOM = false;
-//           return withSetStateAllowed(() => renderer.render(el, context));
-//         }
-//       },
-//       unmount() {
-//         renderer.unmount();
-//       },
-//       getNode() {
-//         if (isDOM) {
-//           return elementToTree(cachedNode);
-//         }
-//         const output = renderer.getRenderOutput();
-//         return {
-//           nodeType: compositeTypeToNodeType(renderer._instance._compositeType),
-//           type: cachedNode.type,
-//           props: cachedNode.props,
-//           key: cachedNode.key || undefined,
-//           ref: cachedNode.ref,
-//           instance: renderer._instance._instance,
-//           rendered: elementToTree(output),
-//         };
-//       },
-//       simulateEvent(node, event, ...args) {
-//         const handler = node.props[propFromEvent(event)];
-//         if (handler) {
-//           withSetStateAllowed(() => {
-//             // TODO(lmr): create/use synthetic events
-//             // TODO(lmr): emulate React's event propagation
-//             renderer.unstable_batchedUpdates(() => {
-//               handler(...args);
-//             });
-//           });
-//         }
-//       },
-//       batchedUpdates(fn) {
-//         return withSetStateAllowed(() => renderer.unstable_batchedUpdates(fn));
-//       },
-//     };
-//   }
+  createShallowRenderer(/* options */) {
+    const renderer = new ShallowRenderer();
+    let isDOM = false;
+    let cachedNode = null;
+    return {
+      render(el, context) {
+        cachedNode = el;
+        if (typeof el.nodeName === 'string') {
+          isDOM = true;
+        } else {
+          isDOM = false;
+          return withSetStateAllowed(() => renderer.render(el, context));
+        }
+      },
+      unmount() {
+        renderer.unmount();
+      },
+      getNode() {
+        if (isDOM) {
+          return elementToTree(cachedNode);
+        }
+        const output = renderer.getRenderOutput();
+        return {
+          nodeType: renderer._instance ? 'class' : 'function',
+          type: cachedNode.nodeName,
+          props: cachedNode.attributes,
+          key: cachedNode.key || undefined,
+          ref: cachedNode.ref,
+          instance: renderer._instance,
+          rendered: elementToTree(output),
+        };
+      },
+      simulateEvent(node, event, ...args) {
+        const handler = node.props[propFromEvent(event)];
+        if (handler) {
+          withSetStateAllowed(() => handler(...args));
+        }
+      },
+      batchedUpdates(fn) {
+        return withSetStateAllowed(fn);
+      }
+    };
+  }
 
   createStringRenderer(options) {
     return {
@@ -231,10 +222,9 @@ class PreactAdapter extends EnzymeAdapter {
   // converts an RSTNode to the corresponding JSX Pragma Element. This will be needed
   // in order to implement the `Wrapper.mount()` and `Wrapper.shallow()` methods, but should
   // be pretty straightforward for people to implement.
-  // eslint-disable-next-line class-methods-use-this, no-unused-vars
   nodeToElement(node) {
     if (!node || typeof node !== 'object') return null;
-    return Preact.h(node.nodeName, propsWithKeysAndRef(node));
+    return Preact.h(node.type, propsWithKeysAndRef(node));
   }
 
   elementToNode(element) {
@@ -246,7 +236,7 @@ class PreactAdapter extends EnzymeAdapter {
   }
 
   isValidElement(element) {
-    // return React.isValidElement(element);
+    // React.isValidElement(element);
     return element && (element instanceof VNode);
   }
 
