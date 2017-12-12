@@ -5,10 +5,8 @@
   "main": "lib/index.js",
   "author": "Brandon Dail",
   "license": "MIT",
-  "jest": {
-    "setupFiles": [
-      "__tests__/index.js"
-    ]
+  "scripts": {
+    "test": "jest"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
