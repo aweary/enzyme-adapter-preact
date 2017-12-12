@@ -10,7 +10,8 @@ chai.use(require('chai-subset'));
 
 const { expect } = chai;
 
-// NB: 98% copy and pase from https://github.com/airbnb/enzyme/blob/master/packages/enzyme-test-suite/test/ShallowWrapper-spec.jsx
+// NB: 98% copy and paste
+// https://github.com/airbnb/enzyme/blob/master/packages/enzyme-test-suite/test/ShallowWrapper-spec.jsx
 
 const getElementPropSelector = prop => x => x.attributes[prop];
 const getWrapperPropSelector = prop => x => x.prop(prop);
