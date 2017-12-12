@@ -14,85 +14,50 @@ import {
   propsWithKeysAndRef,
 } from 'enzyme-adapter-utils';
 
-let VNode = Preact.h('a', null).constructor;
+const VNode = Preact.h('a', null).constructor;
+const EmptyComponent = () => null;
+const KEY = '__k'
+const REF = '__r'
+const TEXT_NODE = 3
 
-function compositeTypeToNodeType(type) {
-  switch (type) {
-    case 0:
-    case 1: return 'class';
-    case 2: return 'function';
-    default:
-      throw new Error(`Enzyme Internal Error: unknown composite type ${type}`);
+function instanceToTree(node) {
+  if (!node) {
+    return null
   }
-}
-function childrenFromInst(inst, el) {
-  if (inst._renderedChildren) {
-    return values(inst._renderedChildren);
-  } else if (el.props) {
-    return values({ '.0': el.props.children });
+  const instance = node._component;
+  const hostNodeProps = node.__preactattr_;
+  const children = [].slice.call(node.childNodes);
+  // If _component exists this node is the root of a composite
+  if (instance) {
+    const props = instance.props;
+    return {
+      nodeType: 'class',
+      type: instance.constructor,
+      props: props,
+      key: instance[KEY],
+      ref: instance[REF],
+      instance: instance,
+      rendered: {
+        nodeType: 'host',
+        type: node.nodeName.toLowerCase(),
+        props: hostNodeProps,
+        instance: node,
+        children: children.map(instanceToTree)
+      }
+    }
   }
-  return [];
-}
 
-function nodeType(inst) {
-  if (inst._compositeType != null) {
-    return compositeTypeToNodeType(inst._compositeType);
+  if (node.nodeType === TEXT_NODE) {
+    return node.nodeValue
   }
-  return 'host';
-}
 
-function instanceToTree(inst) {
-  if (!inst || typeof inst !== 'object') {
-    return inst;
-  }
-  const el = inst._currentElement;
-  if (el == null || el === false) {
-    return null;
-  } else if (typeof el !== 'object') {
-    return el;
-  }
-  if (inst._renderedChildren) {
-    return {
-      nodeType: nodeType(inst),
-      type: el.nodeName,
-      props: el.attributes,
-      key: el.key || undefined,
-      ref: el.ref,
-      instance: inst._instance || inst._hostNode || null,
-      rendered: values(inst._renderedChildren).map(instanceToTree),
-    };
-  }
-  if (inst._hostNode) {
-    return {
-      nodeType: 'host',
-      type: el.nodeName,
-      props: el.attributes,
-      key: el.key || undefined,
-      ref: el.ref,
-      instance: inst._instance || inst._hostNode || null,
-      rendered: childrenFromInst(inst, el).map(instanceToTree),
-    };
-  }
-  if (inst._renderedComponent) {
-    return {
-      nodeType: nodeType(inst),
-      type: el.nodeName,
-      props: el.attributes,
-      key: el.key || undefined,
-      ref: el.ref,
-      instance: inst._instance || inst._hostNode || null,
-      rendered: instanceToTree(inst._renderedComponent),
-    };
-  }
   return {
-    nodeType: nodeType(inst),
-    type: el.nodeName,
-    props: el.attributes,
-    key: el.key || undefined,
-    ref: el.ref,
-    instance: inst._instance || null,
-    rendered: childrenFromInst(inst, el).map(instanceToTree),
-  };
+    nodeType: 'host',
+    type: node.nodeName.toLowerCase(),
+    props: hostNodeProps,
+    instance: node,
+    rendered: children.map(instanceToTree),
+  }
 }
 
 class PreactAdapter extends EnzymeAdapter {
@@ -103,48 +68,48 @@ class PreactAdapter extends EnzymeAdapter {
       supportPrevContextArgumentOfComponentDidUpdate: true,
     };
   }
-//   createMountRenderer(options) {
-//     assertDomAvailable('mount');
-//     const domNode = options.attachTo || global.document.createElement('div');
-//     let instance = null;
-//     return {
-//       render(el, context, callback) {
-//         if (instance === null) {
-//           const ReactWrapperComponent = createMountWrapper(el, options);
-//           const wrappedEl = React.createElement(ReactWrapperComponent, {
-//             Component: el.type,
-//             props: el.props,
-//             context,
-//           });
-//           instance = ReactDOM.render(wrappedEl, domNode);
-//           if (typeof callback === 'function') {
-//             callback();
-//           }
-//         } else {
-//           instance.setChildProps(el.props, context, callback);
-//         }
-//       },
-//       unmount() {
-//         ReactDOM.unmountComponentAtNode(domNode);
-//         instance = null;
-//       },
-//       getNode() {
-//         return instance ? instanceToTree(instance._reactInternalInstance).rendered : null;
-//       },
-//       simulateEvent(node, event, mock) {
-//         const mappedEvent = mapNativeEventNames(event);
-//         const eventFn = TestUtils.Simulate[mappedEvent];
-//         if (!eventFn) {
-//           throw new TypeError(`ReactWrapper::simulate() event '${event}' does not exist`);
-//         }
-//         // eslint-disable-next-line react/no-find-dom-node
-//         eventFn(ReactDOM.findDOMNode(node.instance), mock);
-//       },
-//       batchedUpdates(fn) {
-//         return ReactDOM.unstable_batchedUpdates(fn);
-//       },
-//     };
-//   }
+  createMountRenderer(options) {
+    assertDomAvailable('mount');
+    const domNode = options.attachTo || global.document.createElement('div');
+    let instance = null;
+    return {
+      render(el, context, callback) {
+        if (instance === null) {
+          const PreactWrapperComponent = createMountWrapper(el, options);
+          const wrappedEl = Preact.h(PreactWrapperComponent, {
+            Component: el.type,
+            props: el.props,
+            context,
+          });
+          instance = Preact.render(wrappedEl, domNode);
+          if (typeof callback === 'function') {
+            callback();
+          }
+        } else {
+          instance.setChildProps(el.props, context, callback);
+        }
+      },
+      unmount() {
+        Preact.render(Preact.h(EmptyComponent), domNode, instance);
+        instance = null;
+      },
+      getNode() {
+        const tree = instanceToTree(instance);
+        return instance ? tree.rendered : null;
+      },
+      simulateEvent(node, event, mock) {
+        const mappedEvent = mapNativeEventNames(event);
+        const eventFn = TestUtils.Simulate[mappedEvent];
+        if (!eventFn) {
+          throw new TypeError(`ReactWrapper::simulate() event '${event}' does not exist`);
+        }
+        eventFn(node.instance && node.instance.base || node.instance, mock);
+      },
+      batchedUpdates(fn) {
+        return fn;
+      }
+    };
+  }
 
   createShallowRenderer(/* options */) {
     const renderer = new ShallowRenderer();
@@ -172,8 +137,8 @@ class PreactAdapter extends EnzymeAdapter {
           nodeType: renderer._instance ? 'class' : 'function',
           type: cachedNode.nodeName,
           props: cachedNode.attributes,
-          key: cachedNode.key || undefined,
-          ref: cachedNode.ref,
+          key: cachedNode[KEY] || undefined,
+          ref: cachedNode[REF],
           instance: renderer._instance,
           rendered: elementToTree(output),
         };
@@ -236,7 +201,6 @@ class PreactAdapter extends EnzymeAdapter {
   }
 
   isValidElement(element) {
-    // React.isValidElement(element);
     return element && (element instanceof VNode);
   }
 
