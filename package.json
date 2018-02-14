@@ -6,6 +6,7 @@
   "author": "Brandon Dail",
   "license": "MIT",
   "scripts": {
+    "build": "rollup src/index.js --output.format cjs --output.file lib/index.js",
     "test": "jest"
   },
   "devDependencies": {
@@ -25,6 +26,7 @@
     "proptypes": "^1.1.0",
     "react": "^16.2.0",
     "react-test-renderer": "^16.2.0",
+    "rollup": "rollup/rollup#update-acorn",
     "sinon": "^4.1.3"
   }
 }
