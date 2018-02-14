@@ -1,3 +1,1 @@
-import PreactAdapter from './PreactAdapter';
-
-export default PreactAdapter;
+module.exports = require('./PreactAdapter');

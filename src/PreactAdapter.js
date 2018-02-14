@@ -209,4 +209,4 @@ class PreactAdapter extends EnzymeAdapter {
   }
 }
 
-export default PreactAdapter;
+module.exports = PreactAdapter;
