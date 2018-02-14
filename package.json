@@ -19,17 +19,23 @@
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
     "chai-subset": "^1.6.0",
-    "enzyme": "^3.2.0",
-    "enzyme-adapter-utils": "^1.2.0",
     "jest": "^21.2.1",
     "jest-cli": "^21.2.1",
-    "preact": "^8.2.6",
     "preact-compat": "^3.17.0",
-    "preact-render-to-string": "^3.7.0",
     "proptypes": "^1.1.0",
     "react": "^16.2.0",
-    "react-test-renderer": "^16.2.0",
     "rimraf": "^2.6.2",
     "sinon": "^4.1.3"
+  },
+  "peerDependencies": {
+    "enzyme": "^3.3.0",
+    "preact": "^8.2.7"
+  },
+  "dependencies": {
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-utils": "^1.3.0",
+    "object.values": "^1.0.4",
+    "preact-render-to-string": "^3.7.0",
+    "react-test-renderer": "^16.2.0"
   }
 }
