@@ -6,10 +6,13 @@
   "author": "Brandon Dail",
   "license": "MIT",
   "scripts": {
-    "build": "rollup src/index.js --output.format cjs --output.file lib/index.js",
+    "clean": "rimraf lib",
+    "prebuild": "npm run clean",
+    "build": "babel src --out-dir lib",
     "test": "jest"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-airbnb": "^2.4.0",
@@ -26,7 +29,7 @@
     "proptypes": "^1.1.0",
     "react": "^16.2.0",
     "react-test-renderer": "^16.2.0",
-    "rollup": "rollup/rollup#update-acorn",
+    "rimraf": "^2.6.2",
     "sinon": "^4.1.3"
   }
 }
