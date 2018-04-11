@@ -2,29 +2,37 @@
   "name": "enzyme-adapter-preact",
   "version": "0.1.0",
   "description": "A Preact adapater for the Enzyme testing utility",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "author": "Brandon Dail",
   "license": "MIT",
   "scripts": {
+    "dist": "webpack",
+    "prepack": "npm run dist",
+    "postpublish": "git push && git push --tags",
     "test": "jest"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-airbnb": "^2.4.0",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
     "chai-subset": "^1.6.0",
-    "enzyme": "^3.2.0",
-    "enzyme-adapter-utils": "^1.2.0",
     "jest": "^21.2.1",
     "jest-cli": "^21.2.1",
-    "preact": "^8.2.6",
-    "preact-compat": "^3.17.0",
-    "preact-render-to-string": "^3.7.0",
     "proptypes": "^1.1.0",
+    "sinon": "^4.1.3",
+    "webpack-cli": "^2.0.14",
+    "webpack": "^4.5.0"
+  },
+  "dependencies": {
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-utils": "^1.2.0",
+    "preact": "^8.2.6",
+    "preact-render-to-string": "^3.7.0",
+    "preact-compat": "^3.17.0",
     "react": "^16.2.0",
-    "react-test-renderer": "^16.2.0",
-    "sinon": "^4.1.3"
+    "react-test-renderer": "^16.2.0"
   }
 }
