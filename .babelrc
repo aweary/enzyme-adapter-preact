@@ -1,8 +1,9 @@
 {
   "presets": [
-    ["env", {"modules": false }]
+    ["env", { "loose": true, "modules": false }]
   ],
   "plugins": [
+    "transform-object-rest-spread",
     "transform-es2015-modules-commonjs",
     ["transform-react-jsx", { "pragma": "h" }]
   ]
