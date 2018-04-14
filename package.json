@@ -42,5 +42,9 @@
     "proptypes": "^1.1.0",
     "react": "^16.2.0",
     "react-test-renderer": "^16.2.0"
-  }
+  },
+  "files": [
+    "lib",
+    "src"
+  ]
 }
