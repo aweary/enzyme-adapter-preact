@@ -1,1 +1,1 @@
-module.exports = require('./PreactAdapter');
+export { PreactAdapter as Adapter } from './PreactAdapter';
