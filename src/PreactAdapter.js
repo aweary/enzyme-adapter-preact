@@ -60,7 +60,7 @@ function instanceToTree(node) {
   }
 }
 
-class PreactAdapter extends EnzymeAdapter {
+export class PreactAdapter extends EnzymeAdapter {
   constructor() {
     super();
     this.options = {
@@ -208,5 +208,3 @@ class PreactAdapter extends EnzymeAdapter {
     return Preact.h(...args);
   }
 }
-
-module.exports = PreactAdapter;

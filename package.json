@@ -2,7 +2,8 @@
   "name": "enzyme-adapter-preact",
   "version": "0.1.0",
   "description": "A Preact adapater for the Enzyme testing utility",
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "module": "src/index.js",
   "author": "Brandon Dail",
   "license": "MIT",
   "scripts": {
