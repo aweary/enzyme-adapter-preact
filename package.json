@@ -12,6 +12,10 @@
     "prepublish": "npm run build",
     "test": "jest"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aweary/enzyme-adapter-preact.git"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
