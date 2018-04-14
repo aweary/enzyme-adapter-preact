@@ -4190,7 +4190,7 @@ describe('shallow', () => {
   });
 
   describe('@@iterator', () => {
-    it('should be iterable', () => {
+    it.skip('should be iterable', () => {
       class Foo extends Component {
         render() {
           return (
