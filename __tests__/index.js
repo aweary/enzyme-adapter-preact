@@ -1,4 +1,4 @@
 import Enzyme from 'enzyme';
-import PreactAdapter from 'preact-enzyme-adapter';
+import { Adapter } from 'preact-enzyme-adapter';
 
-Enzyme.configure({ adapter: new PreactAdapter });
+Enzyme.configure({ adapter: new Adapter });
