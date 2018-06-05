@@ -3,6 +3,7 @@ import renderToString from 'preact-render-to-string';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import values from 'object.values';
 import { EnzymeAdapter } from 'enzyme';
+import { Component } from 'preact-compat';
 import {
   elementToTree,
   mapNativeEventNames,
@@ -118,6 +119,7 @@ export class PreactAdapter extends EnzymeAdapter {
     return {
       render(el, context) {
         cachedNode = el;
+        Object.assign(el.type.prototype, Component.prototype);
         if (typeof el.nodeName === 'string') {
           isDOM = true;
         } else {
