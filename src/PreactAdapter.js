@@ -119,11 +119,13 @@ export class PreactAdapter extends EnzymeAdapter {
     return {
       render(el, context) {
         cachedNode = el;
-        Object.assign(el.type.prototype, Component.prototype);
         if (typeof el.nodeName === 'string') {
           isDOM = true;
         } else {
           isDOM = false;
+          if (el.type.prototype.render) {
+            Object.assign(el.type.prototype, Component.prototype);
+          }
           return withSetStateAllowed(() => renderer.render(el, context));
         }
       },
