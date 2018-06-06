@@ -3,6 +3,7 @@ import renderToString from 'preact-render-to-string';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import values from 'object.values';
 import { EnzymeAdapter } from 'enzyme';
+import { Component } from 'preact-compat';
 import {
   elementToTree,
   mapNativeEventNames,
@@ -122,6 +123,9 @@ export class PreactAdapter extends EnzymeAdapter {
           isDOM = true;
         } else {
           isDOM = false;
+          if (el.type.prototype.render) {
+            Object.assign(el.type.prototype, Component.prototype);
+          }
           return withSetStateAllowed(() => renderer.render(el, context));
         }
       },
@@ -133,6 +137,12 @@ export class PreactAdapter extends EnzymeAdapter {
           return elementToTree(cachedNode);
         }
         const output = renderer.getRenderOutput();
+        if (
+          (output && !output.attributes.children) &&
+          (output.children && output.children.length)
+        ) {
+          output.attributes.children = output.children;
+        }
         return {
           nodeType: renderer._instance ? 'class' : 'function',
           type: cachedNode.nodeName,
