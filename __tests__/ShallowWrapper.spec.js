@@ -1,5 +1,4 @@
-import { h } from 'preact';
-import { Component } from 'preact-compat';
+import { Component, h } from 'preact';
 import PropTypes from 'proptypes';
 import chai from 'chai';
 import sinon from 'sinon';

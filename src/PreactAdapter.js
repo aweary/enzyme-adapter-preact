@@ -137,6 +137,12 @@ export class PreactAdapter extends EnzymeAdapter {
           return elementToTree(cachedNode);
         }
         const output = renderer.getRenderOutput();
+        if (
+          (output && !output.attributes.children) &&
+          (output.children && output.children.length)
+        ) {
+          output.attributes.children = output.children;
+        }
         return {
           nodeType: renderer._instance ? 'class' : 'function',
           type: cachedNode.nodeName,
